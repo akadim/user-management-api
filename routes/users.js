@@ -41,7 +41,44 @@ var users = [
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.send(Object.values(users));
+  return res.send(Object.values(users));
+});
+
+/* GET a single user. */
+router.get('/:id', function(req, res, next) {
+  let id = parseInt(req.params.id);
+
+  const user = users.find((user) => user.id === id);
+
+  return res.end(JSON.stringify(user));
+});
+
+router.put('/', function(req, res, next) {
+
+    users = users.map( (user) => {
+         if(user.id === parseInt(req.body.id)) {
+            user.firstname = req.body.firstname;
+            user.lastname = req.body.lastname;
+            user.email = req.body.email;
+            user.age = req.body.age;
+         }
+
+         return user;
+    });
+
+    return res.status(200).send({"message": "updated"});
+});
+
+router.post('/', function(req, res, next) {
+    users.push({
+       id: ( (users.length === 0) ? 1 : parseInt(users[users.length-1].id) + 1),
+       firstname: req.body.firstname,
+       lastname: req.body.lastname,
+       email: req.body.email,
+       age: req.body.age
+    });
+
+    return res.status(200).send({"message": "added"});
 });
 
 module.exports = router;
